@@ -1,0 +1,55 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { generateShareToken } from "@/lib/utils";
+
+export async function GET() {
+  try {
+    const queues = await prisma.queue.findMany({
+      include: {
+        _count: {
+          select: { items: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(queues);
+  } catch (error) {
+    console.error("Failed to fetch queues.", error);
+    return NextResponse.json(
+      { error: "Failed to fetch queues." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { name } = body as { name: string };
+
+    if (!name || name.trim().length === 0) {
+      return NextResponse.json(
+        { error: "Queue name is required." },
+        { status: 400 }
+      );
+    }
+
+    const shareToken = generateShareToken();
+
+    const queue = await prisma.queue.create({
+      data: {
+        name: name.trim(),
+        shareToken,
+      },
+    });
+
+    return NextResponse.json(queue, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create queue.", error);
+    return NextResponse.json(
+      { error: "Failed to create queue." },
+      { status: 500 }
+    );
+  }
+}

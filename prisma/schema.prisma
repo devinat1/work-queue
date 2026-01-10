@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Queue {
+  id         String      @id @default(cuid())
+  name       String
+  shareToken String      @unique
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  items      QueueItem[]
+}
+
+model QueueItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  position    Int
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  queue       Queue    @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  queueId     String
+}
