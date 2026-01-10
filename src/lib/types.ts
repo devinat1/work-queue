@@ -4,8 +4,8 @@ export interface QueueItem {
   description: string | null;
   position: number;
   status: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   queueId: string;
 }
 
@@ -13,8 +13,8 @@ export interface Queue {
   id: string;
   name: string;
   shareToken: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   items?: QueueItem[];
   _count?: {
     items: number;
