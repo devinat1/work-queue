@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { QueueItem } from "@/lib/types";
 
 interface AddItemFormProps {
-  shareToken: string;
-  onItemAdded: (item: QueueItem) => void;
+  onAddItem: (title: string) => Promise<void>;
 }
 
-export function AddItemForm({ shareToken, onItemAdded }: AddItemFormProps) {
+export function AddItemForm({ onAddItem }: AddItemFormProps) {
   const [itemTitle, setItemTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,21 +17,14 @@ export function AddItemForm({ shareToken, onItemAdded }: AddItemFormProps) {
       return;
     }
 
+    const titleToAdd = itemTitle;
+    setItemTitle("");
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/queues/${shareToken}/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: itemTitle }),
-      });
-
-      if (response.ok) {
-        const newItem = await response.json();
-        onItemAdded(newItem);
-        setItemTitle("");
-      }
+      await onAddItem(titleToAdd);
     } catch (error) {
+      setItemTitle(titleToAdd);
       console.error("Failed to add item.", error);
     } finally {
       setIsLoading(false);

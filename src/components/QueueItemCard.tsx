@@ -30,16 +30,17 @@ function renderTextWithLinks(text: string, isCompleted: boolean): React.ReactNod
 
 interface QueueItemCardProps {
   item: QueueItem;
-  shareToken: string;
   isFirst: boolean;
   isOwner: boolean;
-  onUpdate: (updatedItem: QueueItem) => void;
-  onDelete: (itemId: string) => void;
+  onUpdate: (
+    itemId: string,
+    updates: Partial<Pick<QueueItem, "title" | "status">>
+  ) => Promise<void>;
+  onDelete: (itemId: string) => Promise<void>;
 }
 
 export function QueueItemCard({
   item,
-  shareToken,
   isFirst,
   isOwner,
   onUpdate,
@@ -71,23 +72,12 @@ export function QueueItemCard({
     }
 
     setIsLoading(true);
+    setIsEditing(false);
 
     try {
-      const response = await fetch(
-        `/api/queues/${shareToken}/items/${item.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title: editTitle }),
-        }
-      );
-
-      if (response.ok) {
-        const updatedItem = await response.json();
-        onUpdate(updatedItem);
-        setIsEditing(false);
-      }
+      await onUpdate(item.id, { title: editTitle });
     } catch (error) {
+      setEditTitle(item.title);
       console.error("Failed to update item.", error);
     } finally {
       setIsLoading(false);
@@ -104,16 +94,7 @@ export function QueueItemCard({
     }
 
     try {
-      const response = await fetch(
-        `/api/queues/${shareToken}/items/${item.id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (response.ok) {
-        onDelete(item.id);
-      }
+      await onDelete(item.id);
     } catch (error) {
       console.error("Failed to delete item.", error);
     }
@@ -125,19 +106,7 @@ export function QueueItemCard({
     const newStatus = item.status === "completed" ? "pending" : "completed";
 
     try {
-      const response = await fetch(
-        `/api/queues/${shareToken}/items/${item.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
-
-      if (response.ok) {
-        const updatedItem = await response.json();
-        onUpdate(updatedItem);
-      }
+      await onUpdate(item.id, { status: newStatus });
     } catch (error) {
       console.error("Failed to update status.", error);
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   DndContext,
   closestCenter,
@@ -20,6 +20,10 @@ import { QueueItemCard } from "./QueueItemCard";
 import { AddItemForm } from "./AddItemForm";
 import type { QueueItem } from "@/lib/types";
 
+const TEMP_ID_PREFIX = "temp_";
+const generateTempId = (): string => `${TEMP_ID_PREFIX}${crypto.randomUUID()}`;
+const isTempId = (id: string): boolean => id.startsWith(TEMP_ID_PREFIX);
+
 interface QueueItemsListProps {
   shareToken: string;
   initialItems: QueueItem[];
@@ -32,6 +36,7 @@ export function QueueItemsList({
   isOwner,
 }: QueueItemsListProps) {
   const [items, setItems] = useState<QueueItem[]>(initialItems);
+  const pendingCreatesRef = useRef<Set<string>>(new Set());
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -50,13 +55,16 @@ export function QueueItemsList({
     const oldIndex = items.findIndex((item) => item.id === active.id);
     const newIndex = items.findIndex((item) => item.id === over.id);
 
+    const previousItems = items;
     const newItems = arrayMove(items, oldIndex, newIndex);
     setItems(newItems);
 
-    const reorderData = newItems.map((item, index) => ({
-      id: item.id,
-      position: index,
-    }));
+    const reorderData = newItems
+      .filter((item) => !isTempId(item.id))
+      .map((item, index) => ({
+        id: item.id,
+        position: index,
+      }));
 
     try {
       await fetch(`/api/queues/${shareToken}/items/reorder`, {
@@ -66,26 +74,120 @@ export function QueueItemsList({
       });
     } catch (error) {
       console.error("Failed to reorder items.", error);
-      setItems(initialItems);
+      setItems(previousItems);
     }
   };
 
-  const handleItemAdded = (newItem: QueueItem) => {
-    setItems((currentItems) => [...currentItems, newItem]);
+  const handleAddItem = async (title: string): Promise<void> => {
+    const tempId = generateTempId();
+    const optimisticItem: QueueItem = {
+      id: tempId,
+      title,
+      description: null,
+      position: items.length,
+      status: "pending",
+      queueId: items[0]?.queueId ?? shareToken,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    setItems((current) => [...current, optimisticItem]);
+    pendingCreatesRef.current.add(tempId);
+
+    try {
+      const response = await fetch(`/api/queues/${shareToken}/items`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title }),
+      });
+
+      if (!pendingCreatesRef.current.has(tempId)) return;
+
+      if (response.ok) {
+        const realItem = await response.json();
+        setItems((current) =>
+          current.map((item) => (item.id === tempId ? realItem : item))
+        );
+      } else {
+        throw new Error("API request failed.");
+      }
+    } catch (error) {
+      console.error("Failed to create item.", error);
+      setItems((current) => current.filter((item) => item.id !== tempId));
+    } finally {
+      pendingCreatesRef.current.delete(tempId);
+    }
   };
 
-  const handleItemUpdate = (updatedItem: QueueItem) => {
-    setItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === updatedItem.id ? updatedItem : item
+  const handleUpdateItem = async (
+    itemId: string,
+    updates: Partial<Pick<QueueItem, "title" | "status">>
+  ): Promise<void> => {
+    const originalItem = items.find((item) => item.id === itemId);
+    if (!originalItem) return;
+
+    setItems((current) =>
+      current.map((item) =>
+        item.id === itemId ? { ...item, ...updates } : item
       )
     );
+
+    try {
+      const response = await fetch(
+        `/api/queues/${shareToken}/items/${itemId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        }
+      );
+
+      if (response.ok) {
+        const updatedItem = await response.json();
+        setItems((current) =>
+          current.map((item) => (item.id === itemId ? updatedItem : item))
+        );
+      } else {
+        throw new Error("API request failed.");
+      }
+    } catch (error) {
+      console.error("Failed to update item.", error);
+      setItems((current) =>
+        current.map((item) => (item.id === itemId ? originalItem : item))
+      );
+    }
   };
 
-  const handleItemDelete = (itemId: string) => {
-    setItems((currentItems) =>
-      currentItems.filter((item) => item.id !== itemId)
-    );
+  const handleDeleteItem = async (itemId: string): Promise<void> => {
+    if (isTempId(itemId)) {
+      pendingCreatesRef.current.delete(itemId);
+      setItems((current) => current.filter((item) => item.id !== itemId));
+      return;
+    }
+
+    const deletedItem = items.find((item) => item.id === itemId);
+    const deletedIndex = items.findIndex((item) => item.id === itemId);
+    if (!deletedItem) return;
+
+    setItems((current) => current.filter((item) => item.id !== itemId));
+
+    try {
+      const response = await fetch(
+        `/api/queues/${shareToken}/items/${itemId}`,
+        { method: "DELETE" }
+      );
+
+      if (!response.ok) {
+        throw new Error("API request failed.");
+      }
+    } catch (error) {
+      console.error("Failed to delete item.", error);
+      setItems((current) => {
+        const restored = [...current];
+        restored.splice(deletedIndex, 0, deletedItem);
+        return restored;
+      });
+    }
   };
 
   if (!isOwner) {
@@ -101,11 +203,10 @@ export function QueueItemsList({
               <QueueItemCard
                 key={item.id}
                 item={item}
-                shareToken={shareToken}
                 isFirst={index === 0}
                 isOwner={false}
-                onUpdate={handleItemUpdate}
-                onDelete={handleItemDelete}
+                onUpdate={handleUpdateItem}
+                onDelete={handleDeleteItem}
               />
             ))}
           </div>
@@ -116,7 +217,7 @@ export function QueueItemsList({
 
   return (
     <div className="flex flex-col gap-6">
-      <AddItemForm shareToken={shareToken} onItemAdded={handleItemAdded} />
+      <AddItemForm onAddItem={handleAddItem} />
 
       {items.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
@@ -138,11 +239,10 @@ export function QueueItemsList({
                 <QueueItemCard
                   key={item.id}
                   item={item}
-                  shareToken={shareToken}
                   isFirst={index === 0}
                   isOwner={true}
-                  onUpdate={handleItemUpdate}
-                  onDelete={handleItemDelete}
+                  onUpdate={handleUpdateItem}
+                  onDelete={handleDeleteItem}
                 />
               ))}
             </div>
