@@ -15,9 +15,10 @@ export async function GET() {
 
     return NextResponse.json(queues);
   } catch (error) {
-    console.error("Failed to fetch queues.", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Failed to fetch queues:", errorMessage, error);
     return NextResponse.json(
-      { error: "Failed to fetch queues." },
+      { error: "Failed to fetch queues.", details: errorMessage },
       { status: 500 }
     );
   }
