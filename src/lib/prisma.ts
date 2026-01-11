@@ -9,19 +9,17 @@ function createPrismaClient(): PrismaClient {
   const tursoUrl = process.env.TURSO_DATABASE_URL;
   const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
 
-  if (tursoUrl && tursoAuthToken) {
-    const adapter = new PrismaLibSql({
-      url: tursoUrl,
-      authToken: tursoAuthToken,
-    });
-    return new PrismaClient({ adapter });
+  if (!tursoUrl || !tursoAuthToken) {
+    throw new Error(
+      "TURSO_DATABASE_URL and TURSO_AUTH_TOKEN environment variables are required."
+    );
   }
 
-  // Fallback to local SQLite for development
-  const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
-  const adapter = new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL ?? "file:./prisma/dev.db",
+  const adapter = new PrismaLibSql({
+    url: tursoUrl,
+    authToken: tursoAuthToken,
   });
+
   return new PrismaClient({ adapter });
 }
 
