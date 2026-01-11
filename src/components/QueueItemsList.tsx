@@ -23,11 +23,13 @@ import type { QueueItem } from "@/lib/types";
 interface QueueItemsListProps {
   shareToken: string;
   initialItems: QueueItem[];
+  isOwner: boolean;
 }
 
 export function QueueItemsList({
   shareToken,
   initialItems,
+  isOwner,
 }: QueueItemsListProps) {
   const [items, setItems] = useState<QueueItem[]>(initialItems);
 
@@ -86,6 +88,32 @@ export function QueueItemsList({
     );
   };
 
+  if (!isOwner) {
+    return (
+      <div className="flex flex-col gap-6">
+        {items.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            <div className="text-lg">No items in this queue</div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {items.map((item, index) => (
+              <QueueItemCard
+                key={item.id}
+                item={item}
+                shareToken={shareToken}
+                isFirst={index === 0}
+                isOwner={false}
+                onUpdate={handleItemUpdate}
+                onDelete={handleItemDelete}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <AddItemForm shareToken={shareToken} onItemAdded={handleItemAdded} />
@@ -112,6 +140,7 @@ export function QueueItemsList({
                   item={item}
                   shareToken={shareToken}
                   isFirst={index === 0}
+                  isOwner={true}
                   onUpdate={handleItemUpdate}
                   onDelete={handleItemDelete}
                 />

@@ -1,10 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateShareToken } from "@/lib/utils";
+import { getSession } from "@/lib/auth-helpers";
 
 export async function GET() {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const queues = await prisma.queue.findMany({
+      where: {
+        userId: session.user.id,
+      },
       include: {
         _count: {
           select: { items: true },
@@ -26,6 +36,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { name } = body as { name: string };
 
@@ -42,6 +58,7 @@ export async function POST(request: Request) {
       data: {
         name: name.trim(),
         shareToken,
+        userId: session.user.id,
       },
     });
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth-helpers";
 
 interface RouteParams {
   params: Promise<{ token: string; id: string }>;
@@ -7,6 +8,12 @@ interface RouteParams {
 
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { token, id } = await params;
     const body = await request.json();
     const { title, description, status } = body as {
@@ -21,6 +28,10 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
     if (!queue) {
       return NextResponse.json({ error: "Queue not found." }, { status: 404 });
+    }
+
+    if (queue.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const existingItem = await prisma.queueItem.findFirst({
@@ -79,6 +90,12 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { token, id } = await params;
 
     const queue = await prisma.queue.findUnique({
@@ -87,6 +104,10 @@ export async function DELETE(request: Request, { params }: RouteParams) {
 
     if (!queue) {
       return NextResponse.json({ error: "Queue not found." }, { status: 404 });
+    }
+
+    if (queue.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const existingItem = await prisma.queueItem.findFirst({

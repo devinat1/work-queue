@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth-helpers";
 
 interface RouteParams {
   params: Promise<{ token: string }>;
@@ -34,7 +35,27 @@ export async function GET(request: Request, { params }: RouteParams) {
 
 export async function PUT(request: Request, { params }: RouteParams) {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { token } = await params;
+
+    const existingQueue = await prisma.queue.findUnique({
+      where: { shareToken: token },
+      select: { userId: true },
+    });
+
+    if (!existingQueue) {
+      return NextResponse.json({ error: "Queue not found." }, { status: 404 });
+    }
+
+    if (existingQueue.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { name } = body as { name: string };
 
@@ -62,7 +83,26 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { token } = await params;
+
+    const existingQueue = await prisma.queue.findUnique({
+      where: { shareToken: token },
+      select: { userId: true },
+    });
+
+    if (!existingQueue) {
+      return NextResponse.json({ error: "Queue not found." }, { status: 404 });
+    }
+
+    if (existingQueue.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     await prisma.queue.delete({
       where: { shareToken: token },

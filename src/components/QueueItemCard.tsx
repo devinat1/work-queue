@@ -9,6 +9,7 @@ interface QueueItemCardProps {
   item: QueueItem;
   shareToken: string;
   isFirst: boolean;
+  isOwner: boolean;
   onUpdate: (updatedItem: QueueItem) => void;
   onDelete: (itemId: string) => void;
 }
@@ -17,6 +18,7 @@ export function QueueItemCard({
   item,
   shareToken,
   isFirst,
+  isOwner,
   onUpdate,
   onDelete,
 }: QueueItemCardProps) {
@@ -31,7 +33,7 @@ export function QueueItemCard({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: item.id });
+  } = useSortable({ id: item.id, disabled: !isOwner });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -95,6 +97,8 @@ export function QueueItemCard({
   };
 
   const handleToggleStatus = async () => {
+    if (!isOwner) return;
+
     const newStatus = item.status === "completed" ? "pending" : "completed";
 
     try {
@@ -131,34 +135,37 @@ export function QueueItemCard({
       } ${isDragging ? "opacity-50 shadow-lg" : ""}`}
     >
       <div className="flex items-center gap-4">
-        <button
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        {isOwner && (
+          <button
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 8h16M4 16h16"
-            />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 8h16M4 16h16"
+              />
+            </svg>
+          </button>
+        )}
 
         <button
           onClick={handleToggleStatus}
+          disabled={!isOwner}
           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
             item.status === "completed"
               ? "bg-green-500 border-green-500"
-              : "border-gray-300 hover:border-gray-400"
-          }`}
+              : "border-gray-300"
+          } ${isOwner ? "hover:border-gray-400 cursor-pointer" : "cursor-default"}`}
         >
           {item.status === "completed" ? (
             <svg
@@ -243,7 +250,7 @@ export function QueueItemCard({
             {item.status}
           </span>
 
-          {isEditing ? null : (
+          {isOwner && !isEditing && (
             <>
               <button
                 onClick={() => setIsEditing(true)}

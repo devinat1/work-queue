@@ -1,3 +1,13 @@
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
 export interface QueueItem {
   id: string;
   title: string;
@@ -15,6 +25,8 @@ export interface Queue {
   shareToken: string;
   createdAt: Date | string;
   updatedAt: Date | string;
+  userId: string;
+  user?: User;
   items?: QueueItem[];
   _count?: {
     items: number;

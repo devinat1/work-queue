@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ShareButton } from "@/components/ShareButton";
 import { QueueItemsList } from "@/components/QueueItemsList";
+import { getSession } from "@/lib/auth-helpers";
 
 export const dynamic = "force-dynamic";
 
@@ -19,12 +20,21 @@ export default async function QueuePage({ params }: PageProps) {
       items: {
         orderBy: { position: "asc" },
       },
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 
   if (!queue) {
     notFound();
   }
+
+  const session = await getSession();
+  const isOwner = session?.user.id === queue.userId;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -44,14 +54,23 @@ export default async function QueuePage({ params }: PageProps) {
               <div className="text-gray-600">
                 {queue.items.length}{" "}
                 {queue.items.length === 1 ? "item" : "items"} in queue
+                {!isOwner && queue.user && (
+                  <span> &middot; by {queue.user.name}</span>
+                )}
               </div>
+              {!isOwner && (
+                <div className="text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-md inline-block">
+                  View only
+                </div>
+              )}
             </div>
-            <ShareButton shareToken={queue.shareToken} />
+            {isOwner && <ShareButton shareToken={queue.shareToken} />}
           </div>
 
           <QueueItemsList
             shareToken={queue.shareToken}
             initialItems={queue.items}
+            isOwner={isOwner}
           />
         </div>
       </div>
