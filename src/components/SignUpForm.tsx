@@ -56,7 +56,7 @@ export function SignUpForm() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
           placeholder="Your name"
         />
       </div>
@@ -71,7 +71,7 @@ export function SignUpForm() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           required
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
           placeholder="you@example.com"
         />
       </div>
@@ -87,7 +87,7 @@ export function SignUpForm() {
           onChange={(event) => setPassword(event.target.value)}
           required
           minLength={8}
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
           placeholder="At least 8 characters"
         />
       </div>
