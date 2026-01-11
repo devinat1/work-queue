@@ -5,6 +5,29 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { QueueItem } from "@/lib/types";
 
+function renderTextWithLinks(text: string, isCompleted: boolean): React.ReactNode[] {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return parts.map((part, index) => {
+    if (urlRegex.test(part)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`text-blue-600 hover:text-blue-800 underline ${isCompleted ? "line-through" : ""}`}
+          onClick={(event) => event.stopPropagation()}
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 interface QueueItemCardProps {
   item: QueueItem;
   shareToken: string;
@@ -120,12 +143,6 @@ export function QueueItemCard({
     }
   };
 
-  const statusColors: Record<string, string> = {
-    pending: "bg-gray-100 text-gray-700",
-    "in-progress": "bg-blue-100 text-blue-700",
-    completed: "bg-green-100 text-green-700",
-  };
-
   return (
     <div
       ref={setNodeRef}
@@ -222,79 +239,62 @@ export function QueueItemCard({
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <span
-                className={`truncate ${
-                  item.status === "completed"
-                    ? "line-through text-gray-400"
-                    : "text-gray-900"
-                }`}
-              >
-                {item.title}
-              </span>
-              {isFirst ? (
-                <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">
-                  Current
-                </span>
-              ) : null}
-            </div>
+            <span
+              className={`break-words ${
+                item.status === "completed"
+                  ? "line-through text-gray-400"
+                  : "text-gray-900"
+              }`}
+            >
+              {renderTextWithLinks(item.title, item.status === "completed")}
+            </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          <span
-            className={`px-2 py-0.5 text-xs rounded-full ${
-              statusColors[item.status] || statusColors.pending
-            }`}
-          >
-            {item.status}
-          </span>
-
-          {isOwner && !isEditing && (
-            <>
-              <button
-                onClick={() => setIsEditing(true)}
-                className="p-1 text-gray-400 hover:text-gray-600"
-                title="Edit"
+        {isOwner && !isEditing && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsEditing(true)}
+              className="p-1 text-gray-400 hover:text-gray-600"
+              title="Edit"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={handleDelete}
-                className="p-1 text-gray-400 hover:text-red-500"
-                title="Delete"
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={handleDelete}
+              className="p-1 text-gray-400 hover:text-red-500"
+              title="Delete"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-              </button>
-            </>
-          )}
-        </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

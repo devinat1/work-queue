@@ -9,8 +9,6 @@ interface QueueCardProps {
 }
 
 export function QueueCard({ queue, onDelete }: QueueCardProps) {
-  const itemCount = queue._count?.items ?? 0;
-
   const handleDelete = async (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -40,13 +38,8 @@ export function QueueCard({ queue, onDelete }: QueueCardProps) {
     <Link href={`/q/${queue.shareToken}`} className="block">
       <div className="p-4 border border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all bg-white">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex flex-col gap-1 min-w-0">
-            <div className="font-medium text-gray-900 truncate">
-              {queue.name}
-            </div>
-            <div className="text-sm text-gray-500">
-              {itemCount} {itemCount === 1 ? "item" : "items"}
-            </div>
+          <div className="font-medium text-gray-900 truncate min-w-0">
+            {queue.name}
           </div>
           <button
             onClick={handleDelete}

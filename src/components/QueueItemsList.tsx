@@ -96,7 +96,7 @@ export function QueueItemsList({
             <div className="text-lg">No items in this queue</div>
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             {items.map((item, index) => (
               <QueueItemCard
                 key={item.id}
@@ -133,7 +133,7 @@ export function QueueItemsList({
             items={items.map((item) => item.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
               {items.map((item, index) => (
                 <QueueItemCard
                   key={item.id}
