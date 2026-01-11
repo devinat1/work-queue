@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Task Queue
+
+A task queue application for tracking and displaying current work in progress. Built with Next.js.
 
 ## Getting Started
 
