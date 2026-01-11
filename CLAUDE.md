@@ -71,13 +71,3 @@
 
 ### Lodash
 - Use lodash where applicable. For example, the mean utility, and sum
-
-### Common Circleback Utils
-
-```
-import {
-  getFullName,
-  getTimeRangeStartDate,
-  isPresent,
-} from '@circleback/utils'
-```
