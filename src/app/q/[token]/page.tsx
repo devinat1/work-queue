@@ -51,13 +51,9 @@ export default async function QueuePage({ params }: PageProps) {
               <div className="text-3xl font-bold text-gray-900">
                 {queue.name}
               </div>
-              <div className="text-gray-600">
-                {queue.items.length}{" "}
-                {queue.items.length === 1 ? "item" : "items"} in queue
-                {!isOwner && queue.user && (
-                  <span> &middot; by {queue.user.name}</span>
-                )}
-              </div>
+              {!isOwner && queue.user && (
+                <div className="text-gray-600">by {queue.user.name}</div>
+              )}
               {!isOwner && (
                 <div className="text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-md inline-block">
                   View only
