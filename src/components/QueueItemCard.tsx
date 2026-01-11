@@ -200,7 +200,7 @@ export function QueueItemCard({
                     setIsEditing(false);
                   }
                 }}
-                className="flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
                 autoFocus
                 disabled={isLoading}
               />
