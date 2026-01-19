@@ -34,7 +34,7 @@ interface QueueItemCardProps {
   isOwner: boolean;
   onUpdate: (
     itemId: string,
-    updates: Partial<Pick<QueueItem, "title" | "status">>
+    updates: Partial<Pick<QueueItem, "title" | "description" | "status">>
   ) => Promise<void>;
   onDelete: (itemId: string) => Promise<void>;
 }
@@ -48,6 +48,7 @@ export function QueueItemCard({
 }: QueueItemCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(item.title);
+  const [editDescription, setEditDescription] = useState(item.description ?? "");
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -67,6 +68,7 @@ export function QueueItemCard({
   const handleSaveEdit = async () => {
     if (editTitle.trim().length === 0) {
       setEditTitle(item.title);
+      setEditDescription(item.description ?? "");
       setIsEditing(false);
       return;
     }
@@ -74,10 +76,13 @@ export function QueueItemCard({
     setIsLoading(true);
     setIsEditing(false);
 
+    const descriptionToSave = editDescription.trim().length > 0 ? editDescription.trim() : null;
+
     try {
-      await onUpdate(item.id, { title: editTitle });
+      await onUpdate(item.id, { title: editTitle, description: descriptionToSave });
     } catch (error) {
       setEditTitle(item.title);
+      setEditDescription(item.description ?? "");
       console.error("Failed to update item.", error);
     } finally {
       setIsLoading(false);
@@ -173,50 +178,75 @@ export function QueueItemCard({
 
         <div className="flex-1 min-w-0">
           {isEditing ? (
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={editTitle}
-                onChange={(event) => setEditTitle(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    handleSaveEdit();
-                  } else if (event.key === "Escape") {
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(event) => setEditTitle(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      handleSaveEdit();
+                    } else if (event.key === "Escape") {
+                      setEditTitle(item.title);
+                      setEditDescription(item.description ?? "");
+                      setIsEditing(false);
+                    }
+                  }}
+                  className="flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
+                  autoFocus
+                  disabled={isLoading}
+                />
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={isLoading}
+                  className="px-2 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => {
                     setEditTitle(item.title);
+                    setEditDescription(item.description ?? "");
                     setIsEditing(false);
-                  }
-                }}
-                className="flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
-                autoFocus
+                  }}
+                  className="px-2 py-1 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+              </div>
+              <textarea
+                value={editDescription}
+                onChange={(event) => setEditDescription(event.target.value)}
+                placeholder="Description (optional)..."
+                className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900 resize-none"
                 disabled={isLoading}
+                rows={2}
               />
-              <button
-                onClick={handleSaveEdit}
-                disabled={isLoading}
-                className="px-2 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => {
-                  setEditTitle(item.title);
-                  setIsEditing(false);
-                }}
-                className="px-2 py-1 text-sm text-gray-600 hover:text-gray-800"
-              >
-                Cancel
-              </button>
             </div>
           ) : (
-            <span
-              className={`break-words ${
-                item.status === "completed"
-                  ? "line-through text-gray-400"
-                  : "text-gray-900"
-              }`}
-            >
-              {renderTextWithLinks(item.title, item.status === "completed")}
-            </span>
+            <div className="flex flex-col gap-1">
+              <span
+                className={`break-words ${
+                  item.status === "completed"
+                    ? "line-through text-gray-400"
+                    : "text-gray-900"
+                }`}
+              >
+                {renderTextWithLinks(item.title, item.status === "completed")}
+              </span>
+              {item.description ? (
+                <span
+                  className={`break-words text-sm ${
+                    item.status === "completed"
+                      ? "line-through text-gray-300"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {renderTextWithLinks(item.description, item.status === "completed")}
+                </span>
+              ) : null}
+            </div>
           )}
         </div>
 

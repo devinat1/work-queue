@@ -78,12 +78,12 @@ export function QueueItemsList({
     }
   };
 
-  const handleAddItem = async (title: string): Promise<void> => {
+  const handleAddItem = async (title: string, description: string | null): Promise<void> => {
     const tempId = generateTempId();
     const optimisticItem: QueueItem = {
       id: tempId,
       title,
-      description: null,
+      description,
       position: items.length,
       status: "pending",
       queueId: items[0]?.queueId ?? shareToken,
@@ -98,7 +98,7 @@ export function QueueItemsList({
       const response = await fetch(`/api/queues/${shareToken}/items`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({ title, description }),
       });
 
       if (!pendingCreatesRef.current.has(tempId)) return;
@@ -121,7 +121,7 @@ export function QueueItemsList({
 
   const handleUpdateItem = async (
     itemId: string,
-    updates: Partial<Pick<QueueItem, "title" | "status">>
+    updates: Partial<Pick<QueueItem, "title" | "description" | "status">>
   ): Promise<void> => {
     const originalItem = items.find((item) => item.id === itemId);
     if (!originalItem) return;
