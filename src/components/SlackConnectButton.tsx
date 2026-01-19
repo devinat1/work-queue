@@ -15,10 +15,14 @@ export function SlackConnectButton() {
 
   const fetchStatus = async () => {
     try {
-      const response = await fetch("/api/slack/status");
+      const response = await fetch("/api/slack/status", {
+        credentials: "include",
+      });
       if (response.ok) {
         const data = (await response.json()) as SlackStatus;
         setStatus(data);
+      } else {
+        console.error("Slack status fetch failed.", response.status);
       }
     } catch (error) {
       console.error("Failed to fetch Slack status.", error);
@@ -40,6 +44,7 @@ export function SlackConnectButton() {
     try {
       const response = await fetch("/api/slack/disconnect", {
         method: "POST",
+        credentials: "include",
       });
       if (response.ok) {
         setStatus({ connected: false, slackTeamId: null, connectedAt: null });

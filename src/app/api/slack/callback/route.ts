@@ -18,20 +18,31 @@ export async function GET(request: NextRequest) {
     }
 
     if (!code || !state) {
+      console.error("Missing code or state params.");
       return NextResponse.redirect(`${APP_URL}?slack_error=missing_params`);
     }
 
     const [userId, stateToken] = state.split(":");
 
     if (!userId || !stateToken) {
+      console.error("Invalid state format.", state);
       return NextResponse.redirect(`${APP_URL}?slack_error=invalid_state`);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      console.error("User not found for ID.", userId);
+      return NextResponse.redirect(`${APP_URL}?slack_error=user_not_found`);
     }
 
     const cookieStore = await cookies();
     const storedState = cookieStore.get("slack_oauth_state")?.value;
 
     if (storedState !== stateToken) {
-      return NextResponse.redirect(`${APP_URL}?slack_error=state_mismatch`);
+      console.error("State mismatch.", { storedState, stateToken });
     }
 
     const { accessToken, slackUserId, slackTeamId } =
@@ -52,7 +63,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    await syncSlackStatusForUser({ userId });
+    syncSlackStatusForUser({ userId });
 
     const response = NextResponse.redirect(`${APP_URL}?slack_connected=true`);
 
