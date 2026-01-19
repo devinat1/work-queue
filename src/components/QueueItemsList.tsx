@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import {
   DndContext,
   closestCenter,
@@ -38,6 +38,18 @@ export function QueueItemsList({
   const [items, setItems] = useState<QueueItem[]>(initialItems);
   const pendingCreatesRef = useRef<Set<string>>(new Set());
 
+  const sortedItems = useMemo(() => {
+    return [...items].sort((a, b) => {
+      const aCompleted = a.status === "completed";
+      const bCompleted = b.status === "completed";
+
+      if (aCompleted !== bCompleted) {
+        return aCompleted ? 1 : -1;
+      }
+      return a.position - b.position;
+    });
+  }, [items]);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -52,11 +64,11 @@ export function QueueItemsList({
       return;
     }
 
-    const oldIndex = items.findIndex((item) => item.id === active.id);
-    const newIndex = items.findIndex((item) => item.id === over.id);
+    const oldIndex = sortedItems.findIndex((item) => item.id === active.id);
+    const newIndex = sortedItems.findIndex((item) => item.id === over.id);
 
     const previousItems = items;
-    const newItems = arrayMove(items, oldIndex, newIndex);
+    const newItems = arrayMove(sortedItems, oldIndex, newIndex);
     setItems(newItems);
 
     const reorderData = newItems
@@ -199,7 +211,7 @@ export function QueueItemsList({
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {items.map((item, index) => (
+            {sortedItems.map((item, index) => (
               <QueueItemCard
                 key={item.id}
                 item={item}
@@ -231,11 +243,11 @@ export function QueueItemsList({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={items.map((item) => item.id)}
+            items={sortedItems.map((item) => item.id)}
             strategy={verticalListSortingStrategy}
           >
             <div className="flex flex-col gap-4">
-              {items.map((item, index) => (
+              {sortedItems.map((item, index) => (
                 <QueueItemCard
                   key={item.id}
                   item={item}
