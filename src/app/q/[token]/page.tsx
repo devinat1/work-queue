@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ShareButton } from "@/components/ShareButton";
+import { SlackConnectButton } from "@/components/SlackConnectButton";
 import { QueueItemsList } from "@/components/QueueItemsList";
 import { getSession } from "@/lib/auth-helpers";
 
@@ -60,7 +61,12 @@ export default async function QueuePage({ params }: PageProps) {
                 </div>
               )}
             </div>
-            {isOwner && <ShareButton shareToken={queue.shareToken} />}
+            {isOwner && (
+              <div className="flex items-center gap-2">
+                <SlackConnectButton />
+                <ShareButton shareToken={queue.shareToken} />
+              </div>
+            )}
           </div>
 
           <QueueItemsList

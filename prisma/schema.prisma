@@ -7,16 +7,17 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  queues        Queue[]
+  id               String            @id @default(cuid())
+  name             String
+  email            String            @unique
+  emailVerified    Boolean           @default(false)
+  image            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  queues           Queue[]
+  slackIntegration SlackIntegration?
 }
 
 model Session {
@@ -78,4 +79,15 @@ model QueueItem {
   updatedAt   DateTime @updatedAt
   queue       Queue    @relation(fields: [queueId], references: [id], onDelete: Cascade)
   queueId     String
+}
+
+model SlackIntegration {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  accessToken String
+  slackUserId String
+  slackTeamId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

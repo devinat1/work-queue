@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth-helpers";
+import { syncSlackStatusForQueue } from "@/lib/slack";
 
 interface RouteParams {
   params: Promise<{ token: string }>;
@@ -57,6 +58,8 @@ export async function POST(request: Request, { params }: RouteParams) {
         queueId: queue.id,
       },
     });
+
+    syncSlackStatusForQueue({ queueId: queue.id });
 
     return NextResponse.json(item, { status: 201 });
   } catch (error) {

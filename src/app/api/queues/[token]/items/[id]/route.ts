@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth-helpers";
+import { syncSlackStatusForQueue } from "@/lib/slack";
 
 interface RouteParams {
   params: Promise<{ token: string; id: string }>;
@@ -78,6 +79,8 @@ export async function PUT(request: Request, { params }: RouteParams) {
       data: updateData,
     });
 
+    syncSlackStatusForQueue({ queueId: queue.id });
+
     return NextResponse.json(item);
   } catch (error) {
     console.error("Failed to update item.", error);
@@ -121,6 +124,8 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     await prisma.queueItem.delete({
       where: { id },
     });
+
+    syncSlackStatusForQueue({ queueId: queue.id });
 
     return NextResponse.json({ success: true });
   } catch (error) {

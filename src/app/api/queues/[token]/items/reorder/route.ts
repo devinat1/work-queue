@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth-helpers";
+import { syncSlackStatusForQueue } from "@/lib/slack";
 
 interface RouteParams {
   params: Promise<{ token: string }>;
@@ -55,6 +56,8 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       where: { queueId: queue.id },
       orderBy: { position: "asc" },
     });
+
+    syncSlackStatusForQueue({ queueId: queue.id });
 
     return NextResponse.json(updatedItems);
   } catch (error) {

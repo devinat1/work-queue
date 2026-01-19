@@ -32,3 +32,13 @@ export interface Queue {
     items: number;
   };
 }
+
+export interface SlackIntegration {
+  id: string;
+  userId: string;
+  accessToken: string;
+  slackUserId: string;
+  slackTeamId: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
