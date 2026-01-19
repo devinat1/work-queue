@@ -1,25 +1,18 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
 function createPrismaClient(): PrismaClient {
-  const tursoUrl = process.env.TURSO_DATABASE_URL;
-  const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
+  const connectionString = process.env.POSTGRES_PRISMA_URL;
 
-  if (!tursoUrl || !tursoAuthToken) {
-    throw new Error(
-      "TURSO_DATABASE_URL and TURSO_AUTH_TOKEN environment variables are required."
-    );
+  if (!connectionString) {
+    throw new Error("POSTGRES_PRISMA_URL environment variable is required.");
   }
 
-  const adapter = new PrismaLibSql({
-    url: tursoUrl,
-    authToken: tursoAuthToken,
-  });
-
+  const adapter = new PrismaPg(connectionString);
   return new PrismaClient({ adapter });
 }
 
