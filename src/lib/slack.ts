@@ -35,7 +35,6 @@ export function getSlackOAuthUrl({ state }: { state: string }): string {
   const redirectUri = `${APP_URL}/api/slack/callback`;
   const params = new URLSearchParams({
     client_id: SLACK_CLIENT_ID ?? "",
-    scope: SLACK_OAUTH_SCOPES.join(","),
     user_scope: SLACK_OAUTH_SCOPES.join(","),
     redirect_uri: redirectUri,
     state,
