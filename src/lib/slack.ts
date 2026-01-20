@@ -177,12 +177,33 @@ export async function syncSlackStatusForQueue({
 }): Promise<void> {
   const queue = await prisma.queue.findUnique({
     where: { id: queueId },
-    select: { userId: true },
+    include: {
+      items: {
+        orderBy: { position: "asc" },
+      },
+    },
   });
 
   if (!queue) {
     return;
   }
 
-  await syncSlackStatusForUser({ userId: queue.userId });
+  const slackIntegration = await prisma.slackIntegration.findUnique({
+    where: { userId: queue.userId },
+  });
+
+  if (!slackIntegration) {
+    return;
+  }
+
+  const status = getSlackStatusFromQueue({ items: queue.items });
+
+  try {
+    await setSlackStatus({
+      accessToken: slackIntegration.accessToken,
+      status,
+    });
+  } catch (error) {
+    console.error("Failed to sync Slack status.", error);
+  }
 }
