@@ -57,7 +57,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       orderBy: { position: "asc" },
     });
 
-    syncSlackStatusForQueue({ queueId: queue.id });
+    await syncSlackStatusForQueue({ queueId: queue.id });
 
     return NextResponse.json(updatedItems);
   } catch (error) {

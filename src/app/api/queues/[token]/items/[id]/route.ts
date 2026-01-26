@@ -79,7 +79,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       data: updateData,
     });
 
-    syncSlackStatusForQueue({ queueId: queue.id });
+    await syncSlackStatusForQueue({ queueId: queue.id });
 
     return NextResponse.json(item);
   } catch (error) {
@@ -125,7 +125,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
       where: { id },
     });
 
-    syncSlackStatusForQueue({ queueId: queue.id });
+    await syncSlackStatusForQueue({ queueId: queue.id });
 
     return NextResponse.json({ success: true });
   } catch (error) {

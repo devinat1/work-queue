@@ -59,7 +59,7 @@ export async function POST(request: Request, { params }: RouteParams) {
       },
     });
 
-    syncSlackStatusForQueue({ queueId: queue.id });
+    await syncSlackStatusForQueue({ queueId: queue.id });
 
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
