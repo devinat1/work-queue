@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import {
   DndContext,
   closestCenter,
@@ -24,6 +24,14 @@ const TEMP_ID_PREFIX = "temp_";
 const generateTempId = (): string => `${TEMP_ID_PREFIX}${crypto.randomUUID()}`;
 const isTempId = (id: string): boolean => id.startsWith(TEMP_ID_PREFIX);
 
+const sortItemsByStatus = (items: QueueItem[]): QueueItem[] =>
+  [...items].sort((a, b) => {
+    const aCompleted = a.status === "completed" ? 1 : 0;
+    const bCompleted = b.status === "completed" ? 1 : 0;
+    if (aCompleted !== bCompleted) return aCompleted - bCompleted;
+    return a.position - b.position;
+  });
+
 interface QueueItemsListProps {
   shareToken: string;
   initialItems: QueueItem[];
@@ -36,6 +44,7 @@ export function QueueItemsList({
   isOwner,
 }: QueueItemsListProps) {
   const [items, setItems] = useState<QueueItem[]>(initialItems);
+  const sortedItems = useMemo(() => sortItemsByStatus(items), [items]);
   const pendingCreatesRef = useRef<Set<string>>(new Set());
 
   const sensors = useSensors(
@@ -52,11 +61,11 @@ export function QueueItemsList({
       return;
     }
 
-    const oldIndex = items.findIndex((item) => item.id === active.id);
-    const newIndex = items.findIndex((item) => item.id === over.id);
+    const oldIndex = sortedItems.findIndex((item) => item.id === active.id);
+    const newIndex = sortedItems.findIndex((item) => item.id === over.id);
 
     const previousItems = items;
-    const newItems = arrayMove(items, oldIndex, newIndex);
+    const newItems = arrayMove(sortedItems, oldIndex, newIndex);
     setItems(newItems);
 
     const reorderData = newItems
@@ -199,7 +208,7 @@ export function QueueItemsList({
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {items.map((item, index) => (
+            {sortedItems.map((item, index) => (
               <QueueItemCard
                 key={item.id}
                 item={item}
@@ -231,11 +240,11 @@ export function QueueItemsList({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={items.map((item) => item.id)}
+            items={sortedItems.map((item) => item.id)}
             strategy={verticalListSortingStrategy}
           >
             <div className="flex flex-col gap-4">
-              {items.map((item, index) => (
+              {sortedItems.map((item, index) => (
                 <QueueItemCard
                   key={item.id}
                   item={item}

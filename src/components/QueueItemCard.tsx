@@ -253,7 +253,11 @@ export function QueueItemCard({
         {isOwner && !isEditing && (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() => {
+                setEditTitle(item.title);
+                setEditDescription(item.description ?? "");
+                setIsEditing(true);
+              }}
               className="p-1 text-gray-400 hover:text-gray-600"
               title="Edit"
             >
