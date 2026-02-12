@@ -65,7 +65,9 @@ export function QueueItemsList({
     const newIndex = sortedItems.findIndex((item) => item.id === over.id);
 
     const previousItems = items;
-    const newItems = arrayMove(sortedItems, oldIndex, newIndex);
+    const newItems = arrayMove(sortedItems, oldIndex, newIndex).map(
+      (item, index) => ({ ...item, position: index })
+    );
     setItems(newItems);
 
     const reorderData = newItems
