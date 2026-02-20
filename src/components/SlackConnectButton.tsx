@@ -58,8 +58,8 @@ export function SlackConnectButton() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 bg-gray-100 border border-gray-200 rounded-lg">
-        <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-500 rounded-full animate-spin" />
+      <div className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div className="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 border-t-gray-500 dark:border-t-gray-400 rounded-full animate-spin" />
         <span>Loading...</span>
       </div>
     );
@@ -68,7 +68,7 @@ export function SlackConnectButton() {
   if (status?.connected) {
     return (
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg">
+        <div className="flex items-center gap-2 px-3 py-2 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-4 h-4"
@@ -88,7 +88,7 @@ export function SlackConnectButton() {
         <button
           onClick={handleDisconnect}
           disabled={isDisconnecting}
-          className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+          className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50"
         >
           {isDisconnecting ? "Disconnecting..." : "Disconnect"}
         </button>

@@ -36,14 +36,14 @@ export function QueueCard({ queue, onDelete }: QueueCardProps) {
 
   return (
     <Link href={`/q/${queue.shareToken}`} className="block">
-      <div className="p-4 border border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all bg-white">
+      <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-400 hover:shadow-md dark:hover:shadow-gray-900/50 transition-all bg-white dark:bg-gray-900">
         <div className="flex items-center justify-between gap-4">
-          <div className="font-medium text-gray-900 truncate min-w-0">
+          <div className="font-medium text-gray-900 dark:text-gray-100 truncate min-w-0">
             {queue.name}
           </div>
           <button
             onClick={handleDelete}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
             title="Delete queue"
           >
             <svg

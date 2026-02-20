@@ -38,7 +38,7 @@ export default async function QueuePage({ params }: PageProps) {
   const isOwner = session?.user.id === queue.userId;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className="max-w-2xl mx-auto px-4 py-12">
         <div className="flex flex-col gap-8">
           <div className="flex items-start justify-between gap-4">
@@ -49,14 +49,14 @@ export default async function QueuePage({ params }: PageProps) {
               >
                 &larr; Back to all queues
               </Link>
-              <div className="text-3xl font-bold text-gray-900">
+              <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 {queue.name}
               </div>
               {!isOwner && queue.user && (
-                <div className="text-gray-600">by {queue.user.name}</div>
+                <div className="text-gray-600 dark:text-gray-400">by {queue.user.name}</div>
               )}
               {!isOwner && (
-                <div className="text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-md inline-block">
+                <div className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-3 py-1 rounded-md inline-block">
                   View only
                 </div>
               )}

@@ -24,13 +24,13 @@ export function ShareButton({ shareToken }: ShareButtonProps) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
     >
       {hasCopied ? (
         <>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 text-green-500"
+            className="w-4 h-4 text-green-500 dark:text-green-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -42,7 +42,7 @@ export function ShareButton({ shareToken }: ShareButtonProps) {
               d="M5 13l4 4L19 7"
             />
           </svg>
-          <span className="text-green-600">Copied!</span>
+          <span className="text-green-600 dark:text-green-400">Copied!</span>
         </>
       ) : (
         <>

@@ -121,8 +121,8 @@ export function QueueItemCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`p-4 bg-white border rounded-lg ${
-        isFirst ? "border-blue-400 ring-2 ring-blue-100" : "border-gray-200"
+      className={`p-4 bg-white dark:bg-gray-900 border rounded-lg ${
+        isFirst ? "border-blue-400 ring-2 ring-blue-100 dark:ring-blue-900" : "border-gray-200 dark:border-gray-700"
       } ${isDragging ? "opacity-50 shadow-lg" : ""}`}
     >
       <div className="flex items-center gap-4">
@@ -130,7 +130,7 @@ export function QueueItemCard({
           <button
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600"
+            className="cursor-grab active:cursor-grabbing p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +155,7 @@ export function QueueItemCard({
           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
             item.status === "completed"
               ? "bg-green-500 border-green-500"
-              : "border-gray-300"
+              : "border-gray-300 dark:border-gray-600"
           } ${isOwner ? "hover:border-gray-400 cursor-pointer" : "cursor-default"}`}
         >
           {item.status === "completed" ? (
@@ -193,7 +193,7 @@ export function QueueItemCard({
                       setIsEditing(false);
                     }
                   }}
-                  className="flex-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900"
+                  className="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
                   autoFocus
                   disabled={isLoading}
                 />
@@ -210,7 +210,7 @@ export function QueueItemCard({
                     setEditDescription(item.description ?? "");
                     setIsEditing(false);
                   }}
-                  className="px-2 py-1 text-sm text-gray-600 hover:text-gray-800"
+                  className="px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                 >
                   Cancel
                 </button>
@@ -219,7 +219,7 @@ export function QueueItemCard({
                 value={editDescription}
                 onChange={(event) => setEditDescription(event.target.value)}
                 placeholder="Description (optional)..."
-                className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-gray-900 resize-none"
+                className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800 resize-none"
                 disabled={isLoading}
                 rows={2}
               />
@@ -229,8 +229,8 @@ export function QueueItemCard({
               <span
                 className={`break-words ${
                   item.status === "completed"
-                    ? "line-through text-gray-400"
-                    : "text-gray-900"
+                    ? "line-through text-gray-400 dark:text-gray-500"
+                    : "text-gray-900 dark:text-gray-100"
                 }`}
               >
                 {renderTextWithLinks(item.title, item.status === "completed")}
@@ -239,8 +239,8 @@ export function QueueItemCard({
                 <span
                   className={`break-words text-sm ${
                     item.status === "completed"
-                      ? "line-through text-gray-300"
-                      : "text-gray-500"
+                      ? "line-through text-gray-300 dark:text-gray-600"
+                      : "text-gray-500 dark:text-gray-400"
                   }`}
                 >
                   {renderTextWithLinks(item.description, item.status === "completed")}
@@ -258,7 +258,7 @@ export function QueueItemCard({
                 setEditDescription(item.description ?? "");
                 setIsEditing(true);
               }}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
               title="Edit"
             >
               <svg
@@ -278,7 +278,7 @@ export function QueueItemCard({
             </button>
             <button
               onClick={handleDelete}
-              className="p-1 text-gray-400 hover:text-red-500"
+              className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500"
               title="Delete"
             >
               <svg

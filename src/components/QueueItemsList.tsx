@@ -205,7 +205,7 @@ export function QueueItemsList({
     return (
       <div className="flex flex-col gap-6">
         {items.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
             <div className="text-lg">No items in this queue</div>
           </div>
         ) : (
@@ -231,7 +231,7 @@ export function QueueItemsList({
       <AddItemForm onAddItem={handleAddItem} />
 
       {items.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
           <div className="text-lg">No items in this queue</div>
           <div className="text-sm">Add your first item above</div>
         </div>
