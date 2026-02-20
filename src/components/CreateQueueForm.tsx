@@ -51,7 +51,7 @@ export function CreateQueueForm() {
           value={queueName}
           onChange={(event) => setQueueName(event.target.value)}
           placeholder="Enter queue name..."
-          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 text-gray-900"
+          className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
           disabled={isLoading}
         />
         <button
@@ -63,7 +63,7 @@ export function CreateQueueForm() {
         </button>
       </div>
       {errorMessage.length > 0 ? (
-        <div className="text-red-500 text-sm">{errorMessage}</div>
+        <div className="text-red-500 dark:text-red-400 text-sm">{errorMessage}</div>
       ) : null}
     </form>
   );
