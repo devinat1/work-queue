@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSlackStatus } from "@work-queue/data-loaders";
+import { disconnectSlack } from "@helpers/client/slack";
 
 export function SlackConnectButton() {
   const { data: status, isLoading, mutate } = useSlackStatus();
@@ -14,13 +15,8 @@ export function SlackConnectButton() {
   const handleDisconnect = async () => {
     setIsDisconnecting(true);
     try {
-      const response = await fetch("/api/slack/disconnect", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (response.ok) {
-        mutate({ connected: false, slackTeamId: null, connectedAt: null });
-      }
+      await disconnectSlack();
+      mutate({ connected: false, slackTeamId: null, connectedAt: null });
     } catch (error) {
       console.error("Failed to disconnect Slack.", error);
     } finally {
@@ -40,7 +36,7 @@ export function SlackConnectButton() {
   if (status?.connected) {
     return (
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-2 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
+        <div className="flex items-center gap-2 px-4 py-2 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-4 h-4"
@@ -60,7 +56,7 @@ export function SlackConnectButton() {
         <button
           onClick={handleDisconnect}
           disabled={isDisconnecting}
-          className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50"
+          className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50"
         >
           {isDisconnecting ? "Disconnecting..." : "Disconnect"}
         </button>

@@ -20,6 +20,12 @@ import { QueueItemCard } from "./QueueItemCard";
 import { AddItemForm } from "./AddItemForm";
 import type { QueueItem } from "@work-queue/types";
 import { TEMP_ID_PREFIX } from "@work-queue/constants";
+import {
+  reorderQueueItems,
+  createQueueItem,
+  updateQueueItem,
+  deleteQueueItem,
+} from "@helpers/client/queues";
 const generateTempId = (): string => `${TEMP_ID_PREFIX}${crypto.randomUUID()}`;
 const isTempId = (id: string): boolean => id.startsWith(TEMP_ID_PREFIX);
 
@@ -77,11 +83,7 @@ export function QueueItemsList({
       }));
 
     try {
-      await fetch(`/api/queues/${shareToken}/items/reorder`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: reorderData }),
-      });
+      await reorderQueueItems({ shareToken, items: reorderData });
     } catch (error) {
       console.error("Failed to reorder items.", error);
       setItems(previousItems);
@@ -105,22 +107,13 @@ export function QueueItemsList({
     pendingCreatesRef.current.add(tempId);
 
     try {
-      const response = await fetch(`/api/queues/${shareToken}/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description }),
-      });
+      const realItem = await createQueueItem({ shareToken, title, description });
 
       if (!pendingCreatesRef.current.has(tempId)) return;
 
-      if (response.ok) {
-        const realItem = await response.json();
-        setItems((current) =>
-          current.map((item) => (item.id === tempId ? realItem : item))
-        );
-      } else {
-        throw new Error("API request failed.");
-      }
+      setItems((current) =>
+        current.map((item) => (item.id === tempId ? realItem : item))
+      );
     } catch (error) {
       console.error("Failed to create item.", error);
       setItems((current) => current.filter((item) => item.id !== tempId));
@@ -143,23 +136,10 @@ export function QueueItemsList({
     );
 
     try {
-      const response = await fetch(
-        `/api/queues/${shareToken}/items/${itemId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updates),
-        }
+      const updatedItem = await updateQueueItem({ shareToken, itemId, updates });
+      setItems((current) =>
+        current.map((item) => (item.id === itemId ? updatedItem : item))
       );
-
-      if (response.ok) {
-        const updatedItem = await response.json();
-        setItems((current) =>
-          current.map((item) => (item.id === itemId ? updatedItem : item))
-        );
-      } else {
-        throw new Error("API request failed.");
-      }
     } catch (error) {
       console.error("Failed to update item.", error);
       setItems((current) =>
@@ -182,14 +162,7 @@ export function QueueItemsList({
     setItems((current) => current.filter((item) => item.id !== itemId));
 
     try {
-      const response = await fetch(
-        `/api/queues/${shareToken}/items/${itemId}`,
-        { method: "DELETE" }
-      );
-
-      if (!response.ok) {
-        throw new Error("API request failed.");
-      }
+      await deleteQueueItem({ shareToken, itemId });
     } catch (error) {
       console.error("Failed to delete item.", error);
       setItems((current) => {

@@ -20,7 +20,7 @@ export default async function handler(
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      console.error("Failed to fetch queues:", errorMessage, error);
+      console.error("Failed to fetch queues.", errorMessage, error);
       return res
         .status(500)
         .json({ error: "Failed to fetch queues.", details: errorMessage });

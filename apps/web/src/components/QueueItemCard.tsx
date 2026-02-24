@@ -126,11 +126,11 @@ export function QueueItemCard({
       } ${isDragging ? "opacity-50 shadow-lg" : ""}`}
     >
       <div className="flex items-center gap-4">
-        {isOwner && (
+        {isOwner ? (
           <button
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+            className="cursor-grab active:cursor-grabbing p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -147,7 +147,7 @@ export function QueueItemCard({
               />
             </svg>
           </button>
-        )}
+        ) : null}
 
         <button
           onClick={handleToggleStatus}
@@ -193,14 +193,14 @@ export function QueueItemCard({
                       setIsEditing(false);
                     }
                   }}
-                  className="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
+                  className="flex-1 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
                   autoFocus
                   disabled={isLoading}
                 />
                 <button
                   onClick={handleSaveEdit}
                   disabled={isLoading}
-                  className="px-2 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                  className="px-2 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                 >
                   Save
                 </button>
@@ -210,7 +210,7 @@ export function QueueItemCard({
                     setEditDescription(item.description ?? "");
                     setIsEditing(false);
                   }}
-                  className="px-2 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  className="px-2 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                 >
                   Cancel
                 </button>
@@ -219,13 +219,13 @@ export function QueueItemCard({
                 value={editDescription}
                 onChange={(event) => setEditDescription(event.target.value)}
                 placeholder="Description (optional)..."
-                className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800 resize-none"
+                className="px-2 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800 resize-none"
                 disabled={isLoading}
                 rows={2}
               />
             </div>
           ) : (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <span
                 className={`break-words ${
                   item.status === "completed"
@@ -250,7 +250,7 @@ export function QueueItemCard({
           )}
         </div>
 
-        {isOwner && !isEditing && (
+        {isOwner && !isEditing ? (
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
@@ -258,7 +258,7 @@ export function QueueItemCard({
                 setEditDescription(item.description ?? "");
                 setIsEditing(true);
               }}
-              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+              className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
               title="Edit"
             >
               <svg
@@ -278,7 +278,7 @@ export function QueueItemCard({
             </button>
             <button
               onClick={handleDelete}
-              className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-500"
+              className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500"
               title="Delete"
             >
               <svg
@@ -297,7 +297,7 @@ export function QueueItemCard({
               </svg>
             </button>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

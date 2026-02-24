@@ -2,6 +2,7 @@
   "/": "pages/index.js",
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
+  "/api/queues/[token]/items/[id]": "pages/api/queues/[token]/items/[id].js",
   "/api/slack/status": "pages/api/slack/status.js",
   "/q/[token]": "pages/q/[token].js"
 }

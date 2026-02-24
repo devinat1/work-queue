@@ -21,19 +21,19 @@ export default function SignInPage() {
         <title>Sign In - Queue Manager</title>
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md w-full max-w-md">
-          <div className="text-center mb-6">
+        <div className="flex flex-col gap-6 bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md w-full max-w-md">
+          <div className="flex flex-col gap-2 text-center">
             <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Sign In
             </div>
-            <div className="text-gray-600 dark:text-gray-400 mt-1">
+            <div className="text-gray-600 dark:text-gray-400">
               Welcome back to Queue
             </div>
           </div>
 
           <SignInForm />
 
-          <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
             <span>Don&apos;t have an account? </span>
             <Link href="/sign-up" className="text-blue-600 hover:underline">
               Sign up

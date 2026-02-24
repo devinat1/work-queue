@@ -56,23 +56,23 @@ export default function QueuePage({ queue, isOwner }: QueuePageProps) {
                 <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {queue.name}
                 </div>
-                {!isOwner && queue.user && (
+                {!isOwner && queue.user ? (
                   <div className="text-gray-600 dark:text-gray-400">
                     by {queue.user.name}
                   </div>
-                )}
-                {!isOwner && (
-                  <div className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-3 py-1 rounded-md inline-block">
+                ) : null}
+                {!isOwner ? (
+                  <div className="text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-4 py-2 rounded-md inline-block">
                     View only
                   </div>
-                )}
+                ) : null}
               </div>
-              {isOwner && (
+              {isOwner ? (
                 <div className="flex items-center gap-2">
                   <SlackConnectButton />
                   <ShareButton shareToken={queue.shareToken} />
                 </div>
-              )}
+              ) : null}
             </div>
 
             <QueueItemsList

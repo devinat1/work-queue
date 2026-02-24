@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { createQueue } from "@helpers/client/queues";
 
 export function CreateQueueForm() {
   const [queueName, setQueueName] = useState("");
@@ -21,18 +22,7 @@ export function CreateQueueForm() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/queues", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: queueName }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to create queue.");
-      }
-
-      const queue = await response.json();
+      const queue = await createQueue({ name: queueName });
       router.push(`/q/${queue.shareToken}`);
     } catch (error) {
       const message =
@@ -51,7 +41,7 @@ export function CreateQueueForm() {
           value={queueName}
           onChange={(event) => setQueueName(event.target.value)}
           placeholder="Enter queue name..."
-          className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
+          className="flex-1 px-4 py-4 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-100 dark:bg-gray-800"
           disabled={isLoading}
         />
         <button

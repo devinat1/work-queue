@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Queue } from "@work-queue/types";
+import { deleteQueue } from "@helpers/client/queues";
 
 interface QueueCardProps {
   queue: Queue;
@@ -22,13 +23,8 @@ export function QueueCard({ queue, onDelete }: QueueCardProps) {
     }
 
     try {
-      const response = await fetch(`/api/queues/${queue.shareToken}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        onDelete(queue.shareToken);
-      }
+      await deleteQueue({ shareToken: queue.shareToken });
+      onDelete(queue.shareToken);
     } catch (error) {
       console.error("Failed to delete queue.", error);
     }

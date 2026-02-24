@@ -9,7 +9,7 @@
   "static/chunks/node_modules_react-dom_4411d9bd._.js",
   "static/chunks/node_modules_@dnd-kit_core_dist_core_esm_34c452fb.js",
   "static/chunks/node_modules_9a0733c5._.js",
-  "static/chunks/[root-of-the-server]__3b523051._.js"
+  "static/chunks/[root-of-the-server]__f6b4f7f8._.js"
 ],
     source: "entry"
 });

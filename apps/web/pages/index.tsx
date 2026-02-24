@@ -68,13 +68,13 @@ export default function Home({
               <div className="flex gap-4 items-center">
                 <Link
                   href="/sign-in"
-                  className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+                  className="px-6 py-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="px-6 py-3 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 font-medium"
+                  className="px-6 py-4 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 font-medium"
                 >
                   Create Account
                 </Link>
