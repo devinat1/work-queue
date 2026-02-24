@@ -1,12 +1,11 @@
-import { prisma } from "./prisma";
-import { QueueItem } from "./types";
+import { prisma } from "@work-queue/db-client";
+import { QueueItem } from "@work-queue/types";
 
 const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID;
 const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-const SLACK_OAUTH_SCOPES = ["users.profile:write"];
-const SLACK_STATUS_CHAR_LIMIT = 100;
+import { SLACK_OAUTH_SCOPES, SLACK_STATUS_CHAR_LIMIT } from "@work-queue/constants";
 
 interface SlackOAuthResponse {
   ok: boolean;

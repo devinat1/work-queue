@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { QueueItem } from "@/lib/types";
+import type { QueueItem } from "@work-queue/types";
 
 function renderTextWithLinks(text: string, isCompleted: boolean): React.ReactNode[] {
   const urlRegex = /(https?:\/\/[^\s]+)/g;

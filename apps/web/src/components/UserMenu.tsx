@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signOut } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface UserMenuProps {
@@ -20,7 +20,6 @@ export function UserMenu({ userName, userEmail }: UserMenuProps) {
     try {
       await signOut();
       router.push("/sign-in");
-      router.refresh();
     } catch (error) {
       console.error("Failed to sign out:", error);
     } finally {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { Queue } from "@/lib/types";
+import type { Queue } from "@work-queue/types";
 
 interface QueueCardProps {
   queue: Queue;

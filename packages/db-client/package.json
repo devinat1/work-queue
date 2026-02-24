@@ -1,0 +1,12 @@
+{
+  "name": "@work-queue/db-client",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@prisma/client": "^7.2.0",
+    "@prisma/adapter-pg": "^7.2.0",
+    "pg": "^8.17.1"
+  }
+}

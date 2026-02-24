@@ -18,9 +18,8 @@ import {
 } from "@dnd-kit/sortable";
 import { QueueItemCard } from "./QueueItemCard";
 import { AddItemForm } from "./AddItemForm";
-import type { QueueItem } from "@/lib/types";
-
-const TEMP_ID_PREFIX = "temp_";
+import type { QueueItem } from "@work-queue/types";
+import { TEMP_ID_PREFIX } from "@work-queue/constants";
 const generateTempId = (): string => `${TEMP_ID_PREFIX}${crypto.randomUUID()}`;
 const isTempId = (id: string): boolean => id.startsWith(TEMP_ID_PREFIX);
 

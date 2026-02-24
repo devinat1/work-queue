@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "noEmit": true,
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@helpers/*": ["./helpers/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}

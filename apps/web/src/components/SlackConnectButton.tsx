@@ -1,39 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-interface SlackStatus {
-  connected: boolean;
-  slackTeamId: string | null;
-  connectedAt: string | null;
-}
+import { useState } from "react";
+import { useSlackStatus } from "@work-queue/data-loaders";
 
 export function SlackConnectButton() {
-  const [status, setStatus] = useState<SlackStatus | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: status, isLoading, mutate } = useSlackStatus();
   const [isDisconnecting, setIsDisconnecting] = useState(false);
-
-  const fetchStatus = async () => {
-    try {
-      const response = await fetch("/api/slack/status", {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = (await response.json()) as SlackStatus;
-        setStatus(data);
-      } else {
-        console.error("Slack status fetch failed.", response.status);
-      }
-    } catch (error) {
-      console.error("Failed to fetch Slack status.", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchStatus();
-  }, []);
 
   const handleConnect = () => {
     window.location.href = "/api/slack/connect";
@@ -47,7 +19,7 @@ export function SlackConnectButton() {
         credentials: "include",
       });
       if (response.ok) {
-        setStatus({ connected: false, slackTeamId: null, connectedAt: null });
+        mutate({ connected: false, slackTeamId: null, connectedAt: null });
       }
     } catch (error) {
       console.error("Failed to disconnect Slack.", error);

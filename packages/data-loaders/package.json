@@ -1,0 +1,14 @@
+{
+  "name": "@work-queue/data-loaders",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "swr": "^2.0.0",
+    "@work-queue/types": "*"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  }
+}

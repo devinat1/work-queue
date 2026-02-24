@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "./ThemeProvider";
+import { useTheme } from "@work-queue/hooks";
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signUp } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -30,7 +30,6 @@ export function SignUpForm() {
       }
 
       router.push("/");
-      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

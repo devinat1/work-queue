@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { QueueCard } from "./QueueCard";
-import type { Queue } from "@/lib/types";
+import type { Queue } from "@work-queue/types";
 
 interface QueueListHomeProps {
   initialQueues: Queue[];
